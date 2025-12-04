@@ -72,11 +72,9 @@
                                   
                                   <button type="button"
                                           class="btn btn-outline-danger"
-                                          
-                                           hx-delete="/api/prospectos/@prospecto.Id"
-                                           hx-confirm="¿Está seguro de eliminar este prospecto?"
-                                          hx-target="#prospectos-list"
-                                          hx-swap="innerHTML"
+                                          hx-delete="/api/prospectos/@prospecto.Id"
+                                          hx-confirm="¿Está seguro de eliminar este prospecto?"
+                                          hx-on:htmx:afterRequest="if (event.detail.successful) htmx.trigger('#prospectos-list', 'load')"
                                           title="Eliminar">
                                       <i class="fas fa-trash"></i>
                                   </button>

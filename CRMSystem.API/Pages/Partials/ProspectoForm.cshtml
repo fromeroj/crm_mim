@@ -12,50 +12,50 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label">Nombre de la Empresa *</label>
-                <input type="text" class="form-control" name="nombreEmpresa" required>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">RFC</label>
-                <input type="text" class="form-control" name="rfc" maxlength="13">
+                <input type="text" class="form-control" name="nombreEmpresa" value="@Model.Prospecto?.NombreEmpresa" required>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label">Nombre del Contacto *</label>
-                <input type="text" class="form-control" name="nombreContacto" required>
+                <input type="text" class="form-control" name="nombreContacto" value="@Model.Prospecto?.NombreContacto" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Apellido del Contacto *</label>
-                <input type="text" class="form-control" name="apellidoContacto" required>
+                <input type="text" class="form-control" name="apellidoContacto" value="@Model.Prospecto?.ApellidoContacto" required>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label">Email *</label>
-                <input type="email" class="form-control" name="email" required>
+                <input type="email" class="form-control" name="email" value="@Model.Prospecto?.Email" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Teléfono</label>
-                <input type="tel" class="form-control" name="telefono">
+                <input type="tel" class="form-control" name="telefono" value="@Model.Prospecto?.Telefono">
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label">Fuente *</label>
-                <select class="form-select" name="fuenteProspectoId" id="fuente-select" required>
+                <select class="form-select" name="fuenteProspectoId" required>
                     <option value="">Seleccione...</option>
+                    @foreach (var fuente in Model.Fuentes)
+                    {
+                        <option value="@fuente.Id" selected="@(Model.Prospecto?.FuenteId == fuente.Id)">@fuente.NombreFuente</option>
+                    }
                 </select>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Estado</label>
                 <select class="form-select" name="estadoProspecto">
-                    <option value="Nuevo">Nuevo</option>
-                    <option value="Contactado">Contactado</option>
-                    <option value="Calificado">Calificado</option>
-                    <option value="Propuesta">Propuesta</option>
+                    <option value="Nuevo" selected="@(Model.Prospecto?.EstadoProspecto == "Nuevo")">Nuevo</option>
+                    <option value="Contactado" selected="@(Model.Prospecto?.EstadoProspecto == "Contactado")">Contactado</option>
+                    <option value="Calificado" selected="@(Model.Prospecto?.EstadoProspecto == "Calificado")">Calificado</option>
+                    <option value="Propuesta" selected="@(Model.Prospecto?.EstadoProspecto == "Propuesta")">Propuesta</option>
                 </select>
             </div>
         </div>
@@ -65,25 +65,25 @@
                 <label class="form-label">Sucursal *</label>
                 <select class="form-select" name="sucursalId" required>
                     <option value="">Seleccione...</option>
-                    <option value="1">Norte</option>
-                    <option value="2">Centro</option>
-                    <option value="3">Sur</option>
+                    <option value="1" selected="@(Model.Prospecto?.SucursalId == 1)">Norte</option>
+                    <option value="2" selected="@(Model.Prospecto?.SucursalId == 2)">Centro</option>
+                    <option value="3" selected="@(Model.Prospecto?.SucursalId == 3)">Sur</option>
                 </select>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Vendedor Asignado</label>
                 <select class="form-select" name="vendedorAsignadoId">
                     <option value="">Sin asignar</option>
-                    <option value="1">Juan Pérez</option>
-                    <option value="2">María García</option>
-                    <option value="3">Carlos López</option>
+                    <option value="1" selected="@(Model.Prospecto?.VendedorAsignadoId == 1)">Juan Pérez</option>
+                    <option value="2" selected="@(Model.Prospecto?.VendedorAsignadoId == 2)">María García</option>
+                    <option value="3" selected="@(Model.Prospecto?.VendedorAsignadoId == 3)">Carlos López</option>
                 </select>
             </div>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Notas</label>
-            <textarea class="form-control" name="notas" rows="3"></textarea>
+            <textarea class="form-control" name="notas" rows="3">@Model.Prospecto?.Notas</textarea>
         </div>
     </form>
 </div>
@@ -93,39 +93,6 @@
 </div>
 
 <script>
-    // Load fuentes
-    fetch('/api/Prospectos/fuentes')
-        .then(r => r.json())
-        .then(fuentes => {
-            const select = document.getElementById('fuente-select');
-            fuentes.forEach(f => {
-                const option = document.createElement('option');
-                option.value = f.id;
-                option.textContent = f.nombreFuente;
-                select.appendChild(option);
-            });
-        });
-
-    // Load existing prospecto if editing
-    const prospectoId = document.getElementById('prospecto-id').value;
-    if (prospectoId) {
-        fetch(`/api/Prospectos/${prospectoId}`)
-            .then(r => r.json())
-            .then(p => {
-                document.querySelector('[name="nombreEmpresa"]').value = p.nombreEmpresa;
-                document.querySelector('[name="rfc"]').value = p.rfc || '';
-                document.querySelector('[name="nombreContacto"]').value = p.nombreContacto;
-                document.querySelector('[name="apellidoContacto"]').value = p.apellidoContacto;
-                document.querySelector('[name="email"]').value = p.email;
-                document.querySelector('[name="telefono"]').value = p.telefono || '';
-                document.querySelector('[name="fuenteProspectoId"]').value = p.fuenteProspectoId;
-                document.querySelector('[name="estadoProspecto"]').value = p.estadoProspecto;
-                document.querySelector('[name="sucursalId"]').value = p.sucursalId;
-                document.querySelector('[name="vendedorAsignadoId"]').value = p.vendedorAsignadoId || '';
-                document.querySelector('[name="notas"]').value = p.notas || '';
-            });
-    }
-
     async function saveProspecto() {
         const form = document.getElementById('prospecto-form');
         if (!form.checkValidity()) {
@@ -135,7 +102,7 @@
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-        
+
         // Convert IDs to numbers
         data.fuenteProspectoId = parseInt(data.fuenteProspectoId);
         data.sucursalId = parseInt(data.sucursalId);
@@ -159,10 +126,10 @@
             if (response.ok) {
                 // Close modal
                 bootstrap.Modal.getInstance(document.getElementById('crudModal')).hide();
-                
+
                 // Refresh list
                 htmx.trigger('#prospectos-list', 'load');
-                
+
                 // Show notification
                 if (window.showNotification) {
                     showNotification(prospectoId ? 'Prospecto actualizado' : 'Prospecto creado', 'success');

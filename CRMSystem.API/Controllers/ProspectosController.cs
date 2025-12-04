@@ -328,21 +328,6 @@ namespace CRMSystem.API.Controllers
             _context.Prospectos.Remove(prospecto);
             await _context.SaveChangesAsync();
 
-            // Si la petición es HTMX, devolver lista actualizada
-            if (Request.Headers["HX-Request"] == "true")
-            {
-                var prospectos = await _context.Prospectos
-                    .Include(p => p.Fuente)
-                    .Include(p => p.VendedorAsignado)
-                    .Include(p => p.Sucursal)
-                    .OrderByDescending(p => p.FechaCreacion)
-                    .Take(50)
-                    .ToListAsync();
-
-                Response.Headers.Add("X-Success-Message", "Prospecto eliminado exitosamente");
-                return PartialView("~/Pages/Partials/_ProspectosList.cshtml", prospectos);
-            }
-
             return Ok(new { mensaje = "Prospecto eliminado exitosamente" });
         }
 
